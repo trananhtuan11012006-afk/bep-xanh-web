@@ -107,8 +107,11 @@ const PICKUP_HUBS = [
   }
 ];
 
+const DEFAULT_CLOUD_API_URL = 'https://script.google.com/macros/s/AKfycbwxg6_oRfOWpwWWStPFOfTZaWrn-dGOdJiFiFyRrF77yUytfd3ONIc6t8IfUSWILAuC-w/exec';
+
 // Dữ liệu mặc định ban đầu
 const INITIAL_STATE = {
+  cloudApiUrl: DEFAULT_CLOUD_API_URL,
   simulatedTime: '08:15', // Giờ giả lập mặc định để khách đặt được cả Ca Trưa & Ca Tối
   selectedShiftId: 'LUNCH_1130',
   selectedHubId: 'HUB_BK_TDN',
@@ -302,7 +305,11 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return { ...INITIAL_STATE, ...parsed };
+      return {
+        ...INITIAL_STATE,
+        ...parsed,
+        cloudApiUrl: parsed.cloudApiUrl || DEFAULT_CLOUD_API_URL
+      };
     }
   } catch (e) {
     console.warn('Không thể đọc localStorage, dùng dữ liệu mặc định:', e);
