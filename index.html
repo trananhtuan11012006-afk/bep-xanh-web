@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bếp Xanh — Đặt Trước Suất Ăn Đại Học | Nấu Chuẩn Just-in-Time & Giao Gộp Điểm Tập Kết</title>
+  <meta name="description" content="Bếp Xanh phục vụ suất ăn đặt trước (Pre-order) cho sinh viên và giảng viên các trường đại học tại Hà Nội. Khóa đơn trước 2-3h, nấu Just-in-Time nóng hổi, miễn phí giao gộp điểm tập kết." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+
+  <!-- ==================== TOP NAVBAR ==================== -->
+  <header class="top-navbar">
+    <div class="navbar-inner">
+      <a href="#" class="brand-logo" onclick="switchAppMode('CUSTOMER'); return false;">
+        <div class="brand-icon">🌿</div>
+        <div class="brand-text-wrap">
+          <span class="brand-name">BẾP XANH</span>
+          <span class="brand-tagline">Pre-order & Just-in-Time • Khu vực ĐH Hà Nội</span>
+        </div>
+      </a>
+
+      <!-- Chuyển đổi 2 phân hệ: Khách hàng & Người quản lý -->
+      <nav class="mode-switcher" aria-label="Chuyển đổi phân hệ">
+        <button id="mode-btn-customer" class="mode-btn active" onclick="switchAppMode('CUSTOMER')">
+          🍱 Giao diện Đặt món (Khách hàng)
+        </button>
+        <button id="mode-btn-admin" class="mode-btn" onclick="switchAppMode('ADMIN')">
+          📊 Quản lý Bếp & Điều phối (Admin)
+        </button>
+      </nav>
+
+      <!-- Đồng hồ giả lập kiểm thử khóa đơn & Giỏ hàng -->
+      <div class="navbar-actions">
+        <div class="clock-pill" title="Thay đổi giờ giả lập để kiểm tra tính năng tự động khóa đơn trước giờ ăn 2.5 tiếng">
+          <span>⏰ Giờ hệ thống:</span>
+          <select id="sim-clock-select" class="clock-select" onchange="handleSimulatedTimeChange(this.value)">
+            <option value="08:15">08:15 (Mở cả Ca Trưa & Tối)</option>
+            <option value="09:30">09:30 (Đã khóa Ca Trưa, Mở Ca Tối)</option>
+            <option value="14:45">14:45 (Mở Ca Tối 18:00)</option>
+            <option value="16:00">16:00 (Đã khóa cả 2 ca)</option>
+          </select>
+        </div>
+
+        <button class="cart-trigger-btn" onclick="switchAppMode('CUSTOMER'); document.getElementById('preorder-cart-box').scrollIntoView({behavior:'smooth'});">
+          <span>🛒 Đơn đặt trước</span>
+          <span id="nav-cart-count" class="cart-count-badge">1</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       PHÂN HỆ 1: GIAO DIỆN KHÁCH HÀNG (CUSTOMER VIEW)
+       ========================================================================== -->
+  <div id="view-customer">
+    <!-- Hero Landing Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <span class="badge badge-green" style="margin-bottom: 0.75rem;">
+              ✨ Mô hình Bếp Tinh Gọn Pre-order & Just-in-Time tại các Trường Đại học Hà Nội
+            </span>
+            <h1 class="hero-title">
+              Đặt Trước Suất Ăn Tươi Ngon, <span class="highlight">Nấu Vừa Đủ Đúng Lúc</span> — Nhận Nhanh Tại Cổng Trường
+            </h1>
+            <p class="hero-subtitle">
+              Dành riêng cho sinh viên & cán bộ giảng viên Bách Khoa, Kinh Tế Quốc Dân, Xây Dựng, ĐH Quốc Gia. Chốt đơn trước giờ ăn 2.5 tiếng để Bếp Xanh chuẩn bị nguyên liệu tươi chuẩn xác 100%, miễn phí vận chuyển nhờ giao gộp theo điểm tập kết.
+            </p>
+
+            <div class="value-pillars">
+              <div class="pillar-card">
+                <div class="pillar-title">⏳ Khóa đơn trước 2.5h</div>
+                <div class="pillar-desc">Chốt số lượng sớm giúp bếp mua nguyên liệu tươi trong ngày, không lo thừa/thiếu.</div>
+              </div>
+              <div class="pillar-card">
+                <div class="pillar-title">🔥 Nấu chuẩn Just-in-Time</div>
+                <div class="pillar-desc">Canh chuẩn phút chế biến để món ăn vừa chín tới lúc đóng thùng giữ nhiệt xuất bếp.</div>
+              </div>
+              <div class="pillar-card">
+                <div class="pillar-title">📍 Giao gộp cổng trường</div>
+                <div class="pillar-desc">Nhận món nhanh tại cổng trường/KTX cố định, rõ giá, 0đ phí giao lẻ từng đơn.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Khung Cấu hình Ca ăn & Điểm nhận hàng cố định -->
+          <div class="cutoff-card">
+            <div class="cutoff-header">
+              <span style="font-weight:800; font-size:0.95rem; color:var(--green-900);">🎯 Thiết lập Ca ăn & Điểm nhận</span>
+              <span id="cutoff-status-badge" class="badge badge-green">🟢 Đang mở đặt trước</span>
+            </div>
+
+            <div class="cutoff-timer-box">
+              <div>
+                <div class="timer-label">Trạng thái khóa sổ Pre-order (Trước 2.5h)</div>
+                <div id="cutoff-countdown-text" class="timer-value">Còn 45 phút nữa chốt đơn</div>
+              </div>
+              <span style="font-size:1.6rem;">⏱️</span>
+            </div>
+
+            <div class="selector-group">
+              <div>
+                <label class="form-label" for="customer-shift-select">1. Chọn khung giờ nhận suất ăn (Ca ăn):</label>
+                <select id="customer-shift-select" class="form-control" onchange="handleCustomerShiftChange(this.value)"></select>
+              </div>
+
+              <div>
+                <label class="form-label" for="customer-hub-select">2. Chọn điểm tập kết cố định tại trường Đại học:</label>
+                <select id="customer-hub-select" class="form-control" onchange="handleCustomerHubChange(this.value)"></select>
+                <div id="selected-hub-spot-note" style="font-size:0.75rem; color:var(--green-800); margin-top:0.35rem; font-weight:600;"></div>
+              </div>
+            </div>
+
+            <p id="cutoff-detail-note" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.75rem; padding-top:0.65rem; border-top:1px dashed var(--border-color);"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Thực đơn & Giỏ hàng đặt trước -->
+    <main class="customer-main">
+      <div class="container">
+        <div class="customer-layout">
+          <!-- Danh sách món ăn -->
+          <div>
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">Thực Đơn Đặt Trước Hôm Nay</h2>
+                <p style="font-size:0.82rem; color:var(--text-secondary);">Hình ảnh, giá bán & định lượng được đồng bộ trực tiếp từ hệ thống Quản lý Bếp Xanh</p>
+              </div>
+              <div id="customer-category-tabs" class="category-tabs"></div>
+            </div>
+
+            <div id="customer-menu-grid" class="menu-grid"></div>
+          </div>
+
+          <!-- Cột phải: Phiếu Đặt Trước (Pre-order Checkout) -->
+          <aside class="order-sidebar" id="preorder-cart-box">
+            <div class="cart-panel">
+              <div class="cart-header">
+                <h3 style="font-size:1.05rem; font-weight:800; color:var(--green-900);">🧺 Phiếu Đặt Trước Của Bạn</h3>
+                <span class="badge badge-orange">Freeship Điểm Tập Kết</span>
+              </div>
+
+              <div id="cart-items-container" class="cart-items-list"></div>
+
+              <div class="cart-summary-box">
+                <div class="summary-line">
+                  <span style="color:var(--text-secondary);">Ca nhận món:</span>
+                  <strong id="cart-summary-shift">Ca Trưa 11:30</strong>
+                </div>
+                <div class="summary-line">
+                  <span style="color:var(--text-secondary);">Điểm tập kết:</span>
+                  <strong id="cart-summary-hub" style="text-align:right; max-width:200px;">Cổng Trần Đại Nghĩa</strong>
+                </div>
+                <div class="summary-line">
+                  <span style="color:var(--text-secondary);">Tổng số lượng:</span>
+                  <strong id="cart-total-portions">1 suất</strong>
+                </div>
+                <div class="summary-total">
+                  <span>Tổng thanh toán:</span>
+                  <span id="cart-total-price" style="color:var(--orange-600);">42.000đ</span>
+                </div>
+              </div>
+
+              <form onsubmit="submitCustomerPreorder(event)">
+                <div style="display:flex; flex-direction:column; gap:0.65rem; margin-bottom:0.9rem;">
+                  <div>
+                    <label class="form-label" for="cust-name-input">Họ tên & Khoa/Trường (Sinh viên / Giảng viên):</label>
+                    <input id="cust-name-input" type="text" class="form-control" placeholder="VD: Lê Minh Tuấn (SV K68 Bách Khoa)" value="Lê Minh Tuấn (SV K68 Bách Khoa)" required />
+                  </div>
+                  <div>
+                    <label class="form-label" for="cust-phone-input">Số điện thoại nhận đồ tại điểm tập kết:</label>
+                    <input id="cust-phone-input" type="tel" class="form-control" placeholder="VD: 0988776655" value="0988776655" required />
+                  </div>
+                  <div>
+                    <label class="form-label" for="cust-payment-input">Hình thức thanh toán:</label>
+                    <select id="cust-payment-input" class="form-control">
+                      <option value="Chuyển khoản QR">Chuyển khoản QR (Ưu tiên nhận nhanh 5 giây)</option>
+                      <option value="Tiền mặt khi nhận">Thanh toán tiền mặt tại điểm tập kết</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button id="btn-submit-preorder" type="submit" class="btn btn-accent" style="width:100%; padding:0.75rem;">
+                  Chốt Đơn Đặt Trước
+                </button>
+              </form>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Bảng Lịch sử đơn hàng đã thu thập -->
+        <section class="history-section">
+          <div class="section-header" style="margin-bottom:0.85rem;">
+            <div>
+              <h3 style="font-size:1.12rem; font-weight:800; color:var(--green-900);">📋 Lịch Sử Đơn Đặt Trước & Dữ Liệu Thu Thập</h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary);">Toàn bộ đơn khách đặt được lưu trữ theo khung giờ, món ăn và điểm giao để tự động tính vật tư BOM & gộp chuyến ở phân hệ Quản lý.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              <span id="customer-history-count" class="badge badge-green">6 đơn đã ghi nhận</span>
+              <button class="btn btn-outline btn-sm" onclick="switchAppMode('ADMIN')">👉 Xem Bếp tính vật tư & Gộp đơn</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Đơn & Giờ Đặt</th>
+                  <th>Khách Hàng (SV / Giảng Viên)</th>
+                  <th>Ca Ăn</th>
+                  <th>Điểm Nhận Hàng Tập Trung</th>
+                  <th>Chi Tiết Món Đặt Trước</th>
+                  <th>Tổng Tiền</th>
+                </tr>
+              </thead>
+              <tbody id="customer-history-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       PHÂN HỆ 2: GIAO DIỆN NGƯỜI QUẢN LÝ (ADMIN DASHBOARD VIEW)
+       ========================================================================== -->
+  <div id="view-admin" class="hidden">
+    <main class="admin-main">
+      <div class="container">
+        <!-- Banner Quản lý -->
+        <div class="admin-header-banner">
+          <div>
+            <span class="badge badge-orange" style="margin-bottom:0.4rem;">BẾP XANH OPERATIONS CENTER</span>
+            <h2 style="font-size:1.45rem; font-weight:800;">Hệ Thống Quản Trị Thực Đơn, Định Mức BOM, Dự Trù JIT & Gộp Đơn</h2>
+            <p style="font-size:0.84rem; opacity:0.9;">Dữ liệu liên thông thời gian thực từ các đơn đặt trước của sinh viên & giảng viên tại 5 điểm tập kết trường Đại học.</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" style="background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.3);" onclick="syncFromCloudNow()">
+              ☁️ Đồng bộ Cloud ngay
+            </button>
+            <button class="btn btn-outline btn-sm" style="background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.3);" onclick="resetDemoData()">
+              🔄 Khôi phục dữ liệu mẫu
+            </button>
+            <button class="btn btn-accent btn-sm" onclick="switchAppMode('CUSTOMER')">
+              👁️ Xem giao diện Khách hàng
+            </button>
+          </div>
+        </div>
+
+        <!-- Khung Kết nối Cloud Database (Google Sheets / API) cho nhiều người dùng -->
+        <div class="admin-panel-card" style="padding:0.9rem 1.15rem; margin-bottom:1.15rem; background:var(--green-50); border-color:var(--green-200);">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+            <div style="flex:1; min-width:260px;">
+              <div style="font-size:0.84rem; font-weight:800; color:var(--green-900); display:flex; align-items:center; gap:0.4rem;">
+                <span>☁️ Kết nối Cơ sở dữ liệu Đám mây (Google Sheets Web App URL — Dùng cho nhiều điện thoại đặt đơn thật):</span>
+                <span id="cloud-sync-badge" class="badge badge-orange">Chế độ Local Demo</span>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.15rem;">
+                Dán link Web App (`https://script.google.com/macros/s/.../exec`) từ file <code>Google_Apps_Script_Backend.js</code> để mọi đơn hàng của sinh viên và thực đơn đồng bộ trực tiếp về Google Sheets của bạn.
+              </div>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex:1; min-width:300px; max-width:520px;">
+              <input id="cloud-api-url-input" type="url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" />
+              <button type="button" class="btn btn-primary btn-sm" style="white-space:nowrap;" onclick="saveCloudApiUrl()">🔗 Lưu & Kết nối</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Thẻ chỉ số KPI theo Ca ăn đang chọn -->
+        <div class="admin-kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Tổng số đơn đã chốt (Ca đang chọn)</div>
+            <div id="kpi-total-orders" class="kpi-value">5 đơn</div>
+            <div class="kpi-sub">Đã khóa trước giờ ăn 2.5 tiếng</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Tổng số suất cần nấu Just-in-Time</div>
+            <div id="kpi-total-portions" class="kpi-value">18 suất</div>
+            <div class="kpi-sub">Chính xác 100% — Không dư thừa</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Doanh thu ca ăn đã chốt</div>
+            <div id="kpi-total-revenue" class="kpi-value">819.000đ</div>
+            <div class="kpi-sub">Rõ giá, minh bạch từng suất</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Điểm tập kết ĐH có đơn gộp</div>
+            <div id="kpi-active-hubs" class="kpi-value">4 / 5 cổng trường</div>
+            <div class="kpi-sub">Tối ưu giao 1 chuyến nhiều đơn</div>
+          </div>
+        </div>
+
+        <!-- Thanh 4 Tab Chức năng cốt lõi của Admin -->
+        <div class="admin-tabs-bar">
+          <button id="btn-TAB_MENU" class="admin-tab-btn active" onclick="switchAdminTab('TAB_MENU')">
+            🖼️ 1. Quản lý Thực đơn & Cập nhật Hình ảnh
+          </button>
+          <button id="btn-TAB_BOM" class="admin-tab-btn" onclick="switchAdminTab('TAB_BOM')">
+            ⚖️ 2. Thiết lập Định mức Món ăn (BOM)
+          </button>
+          <button id="btn-TAB_JIT" class="admin-tab-btn" onclick="switchAdminTab('TAB_JIT')">
+            🧮 3. Dự báo Nhu cầu, Vật tư & Lịch nấu JIT
+          </button>
+          <button id="btn-TAB_HUB" class="admin-tab-btn" onclick="switchAdminTab('TAB_HUB')">
+            🚚 4. Điểm giao Đại học & Gộp đơn Vận chuyển
+          </button>
+        </div>
+
+        <!-- ==================== TAB 1: QUẢN LÝ THỰC ĐƠN & HÌNH ẢNH ==================== -->
+        <section id="pane-TAB_MENU">
+          <div class="admin-grid-2col">
+            <!-- Bảng danh sách món ăn -->
+            <div class="admin-panel-card">
+              <div class="section-header" style="margin-bottom:0.85rem;">
+                <div>
+                  <h3 style="font-size:1.08rem; font-weight:800;">Danh Sách Thực Đơn Hiện Tại</h3>
+                  <p style="font-size:0.78rem; color:var(--text-secondary);">Nhấn "Sửa & Đổi ảnh" để cập nhật tức thì mà không cần sửa code.</p>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="resetDishForm()">+ Thêm món mới</button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Ảnh</th>
+                      <th>Tên Món & Mô Tả</th>
+                      <th>Danh Mục</th>
+                      <th>Giá Bán</th>
+                      <th>Trạng Thái</th>
+                      <th>Thao Tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-menu-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Form thêm/sửa món & Cập nhật hình ảnh (Upload máy / Link / Chọn mẫu) -->
+            <div class="admin-panel-card">
+              <h3 id="dish-form-title" style="font-size:1.08rem; font-weight:800; margin-bottom:0.9rem; color:var(--green-900);">
+                Thêm món ăn mới vào thực đơn
+              </h3>
+
+              <form onsubmit="saveDishForm(event)" style="display:flex; flex-direction:column; gap:0.75rem;">
+                <div>
+                  <label class="form-label" for="dish-name-input">Tên món ăn:</label>
+                  <input id="dish-name-input" type="text" class="form-control" placeholder="VD: Cơm Gà Nướng Sả Mật Ong" required />
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.6rem;">
+                  <div>
+                    <label class="form-label" for="dish-category-input">Danh mục:</label>
+                    <input id="dish-category-input" type="text" class="form-control" value="Cơm Đầy Đặn" />
+                  </div>
+                  <div>
+                    <label class="form-label" for="dish-price-input">Giá bán (VNĐ):</label>
+                    <input id="dish-price-input" type="number" step="1000" class="form-control" value="45000" required />
+                  </div>
+                  <div>
+                    <label class="form-label" for="dish-calories-input">Năng lượng:</label>
+                    <input id="dish-calories-input" type="text" class="form-control" value="610 kcal" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="form-label" for="dish-desc-input">Mô tả thành phần hấp dẫn:</label>
+                  <textarea id="dish-desc-input" rows="2" class="form-control" placeholder="Mô tả nguyên liệu, hương vị, món ăn kèm..."></textarea>
+                </div>
+
+                <!-- Khu vực Cập nhật hình ảnh món ăn (3 cách + Xem trước tức thì) -->
+                <div class="image-uploader-box">
+                  <label class="form-label" style="color:var(--green-900);">📸 Cập nhật hình ảnh món ăn (Xem trước tức thì):</label>
+                  <div class="image-preview-frame">
+                    <img id="dish-image-preview" src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80" alt="Xem trước ảnh món ăn" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'" />
+                  </div>
+
+                  <div style="display:flex; flex-direction:column; gap:0.55rem;">
+                    <div>
+                      <label class="form-label" for="dish-image-file-input">Cách 1: Tải ảnh trực tiếp từ máy tính / điện thoại lên:</label>
+                      <input id="dish-image-file-input" type="file" accept="image/*" class="form-control" style="padding:0.35rem;" onchange="handleLocalImageUpload(event)" />
+                    </div>
+
+                    <div>
+                      <label class="form-label" for="dish-image-url-input">Cách 2: Dán đường dẫn (Link URL) ảnh món ăn:</label>
+                      <input id="dish-image-url-input" type="text" class="form-control" placeholder="https://..." oninput="handleImageUrlInput(this.value)" />
+                    </div>
+
+                    <div>
+                      <span class="form-label">Cách 3: Chọn nhanh từ thư viện ảnh món ăn có sẵn:</span>
+                      <div id="admin-preset-thumbs" class="preset-thumbs"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; font-weight:700; cursor:pointer;">
+                  <input id="dish-available-input" type="checkbox" checked style="width:17px; height:17px; accent-color:var(--green-600);" />
+                  <span>Mở bán món này trên giao diện đặt trước của khách hàng</span>
+                </label>
+
+                <div style="display:flex; gap:0.6rem; margin-top:0.25rem;">
+                  <button type="submit" class="btn btn-primary" style="flex:1;">💾 Lưu & Đồng Bộ Thực Đơn Ngay</button>
+                  <button type="button" class="btn btn-outline" onclick="resetDishForm()">Làm mới</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 2: THIẾT LẬP ĐỊNH MỨC MÓN ĂN (BOM) ==================== -->
+        <section id="pane-TAB_BOM" class="hidden">
+          <div class="admin-panel-card">
+            <div class="section-header">
+              <div>
+                <h3 style="font-size:1.15rem; font-weight:800; color:var(--green-900);">⚖️ Thiết Lập Định Mức Nguyên Vật Liệu (BOM) & Thời Gian Chế Biến</h3>
+                <p style="font-size:0.82rem; color:var(--text-secondary);">Liên kết trực tiếp với danh sách món ăn ở mục Thực đơn. Mọi thay đổi định lượng gram/ml/phút sẽ tự động cập nhật sang Phiếu dự trù vật tư.</p>
+              </div>
+              <div style="min-width:290px;">
+                <label class="form-label" for="bom-dish-select">Chọn món ăn cần cấu hình công thức BOM:</label>
+                <select id="bom-dish-select" class="form-control" onchange="handleBomDishChange(this.value)"></select>
+              </div>
+            </div>
+
+            <div class="admin-grid-2col" style="margin-top:1rem;">
+              <!-- Bảng định mức nguyên liệu 1 suất -->
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+                  <h4 style="font-size:0.96rem; font-weight:800;">
+                    Bảng nguyên liệu đầu vào cho 1 suất: <span id="bom-current-dish-title" style="color:var(--green-700);"></span>
+                  </h4>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Tên Nguyên Vật Liệu</th>
+                        <th>Định Lượng / 1 Suất</th>
+                        <th>Đơn Vị Tính</th>
+                        <th>Xóa</th>
+                      </tr>
+                    </thead>
+                    <tbody id="bom-ingredients-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Cột cấu hình thời gian nấu & thêm nguyên liệu -->
+              <div style="display:flex; flex-direction:column; gap:1rem;">
+                <div style="background:var(--orange-50); border:1px solid var(--orange-200); padding:1rem; border-radius:var(--radius-md);">
+                  <label class="form-label" for="bom-prep-time-input" style="color:var(--orange-700);">⏱️ Định mức thời gian chế biến tiêu chuẩn (Phút / Suất):</label>
+                  <div style="display:flex; gap:0.5rem; margin-top:0.35rem;">
+                    <input id="bom-prep-time-input" type="number" step="0.5" min="0.5" class="form-control" />
+                    <button type="button" class="btn btn-accent btn-sm" onclick="saveDishPrepTime()">Lưu thời gian</button>
+                  </div>
+                  <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.4rem;">
+                    Chỉ số này được dùng để tính ngược thời điểm bắt đầu bật bếp theo nguyên lý <strong>Just-in-Time (JIT)</strong>.
+                  </p>
+                </div>
+
+                <form onsubmit="addBomIngredient(event)" style="background:var(--bg-subtle); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                  <h4 style="font-size:0.9rem; font-weight:800; margin-bottom:0.65rem;">+ Thêm nguyên vật liệu vào định mức món này</h4>
+                  <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                    <div>
+                      <label class="form-label" for="new-bom-name">Tên nguyên liệu (VD: Thịt bò, Gạo tám, Rau cải, Gia vị...):</label>
+                      <input id="new-bom-name" type="text" class="form-control" placeholder="Nhập tên nguyên liệu..." required />
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
+                      <div>
+                        <label class="form-label" for="new-bom-amount">Định lượng cho 1 suất:</label>
+                        <input id="new-bom-amount" type="number" step="any" min="0.1" class="form-control" placeholder="VD: 150" required />
+                      </div>
+                      <div>
+                        <label class="form-label" for="new-bom-unit">Đơn vị:</label>
+                        <select id="new-bom-unit" class="form-control">
+                          <option value="gram">gram</option>
+                          <option value="ml">ml</option>
+                          <option value="quả">quả</option>
+                          <option value="gói">gói</option>
+                        </select>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">+ Thêm vào công thức BOM</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 3: DỰ BÁO NHU CẦU & TÍNH TOÁN VẬT TƯ TỰ ĐỘNG + JIT ==================== -->
+        <section id="pane-TAB_JIT" class="hidden">
+          <div class="admin-panel-card">
+            <div class="section-header">
+              <div>
+                <h3 style="font-size:1.15rem; font-weight:800; color:var(--green-900);">🧮 Dự Báo Nhu Cầu, Phiếu Dự Trù Nguyên Vật Liệu & Lịch Nấu Just-in-Time</h3>
+                <p style="font-size:0.82rem; color:var(--text-secondary);">Hệ thống tự động gom toàn bộ đơn đặt trước trong ca ăn, nhân với bảng định mức BOM để xuất phiếu đi chợ chính xác 100%.</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.65rem;">
+                <label class="form-label" style="margin:0;">Lọc theo Ca ăn:</label>
+                <select class="form-control admin-shift-filter-select" style="min-width:230px;" onchange="handleAdminShiftFilterChange(this.value)"></select>
+                <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ In phiếu bếp</button>
+              </div>
+            </div>
+
+            <div class="admin-grid-2col" style="margin-top:1rem;">
+              <!-- Phiếu dự trù nguyên vật liệu cần mua -->
+              <div>
+                <h4 style="font-size:0.96rem; font-weight:800; margin-bottom:0.75rem; color:var(--green-800);">
+                  🛒 Phiếu Dự Trù Nguyên Vật Liệu Cần Mua / Xuất Kho (Auto-MRP)
+                </h4>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>STT</th>
+                        <th>Nguyên Vật Liệu</th>
+                        <th>Tổng Lượng Cần Chuẩn Bị</th>
+                        <th>Chi Tiết Quy Đổi Từ Đơn Đặt Trước</th>
+                      </tr>
+                    </thead>
+                    <tbody id="admin-mrp-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Lịch trình thời gian bắt đầu nấu Just-in-Time -->
+              <div>
+                <h4 style="font-size:0.96rem; font-weight:800; margin-bottom:0.75rem; color:var(--orange-700);">
+                  🔥 Lịch Trình Bắt Đầu Nấu Theo Nguyên Lý Just-in-Time (JIT)
+                </h4>
+                <div id="admin-jit-schedule-container" class="jit-timeline"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 4: QUẢN LÝ ĐIỂM GIAO & GỘP ĐƠN VẬN CHUYỂN ==================== -->
+        <section id="pane-TAB_HUB" class="hidden">
+          <div class="admin-panel-card">
+            <div class="section-header">
+              <div>
+                <h3 style="font-size:1.15rem; font-weight:800; color:var(--green-900);">🚚 Quản Lý Điểm Tập Kết Trường Đại Học & Gộp Đơn Vận Chuyển</h3>
+                <p style="font-size:0.82rem; color:var(--text-secondary);">Tự động gom nhóm đơn hàng theo từng cổng trường đại học & khung giờ giao. Điều phối 1 chuyến xe thùng giữ nhiệt giao nhiều đơn, tiết kiệm tối đa chi phí.</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.65rem;">
+                <label class="form-label" style="margin:0;">Ca giao hàng:</label>
+                <select class="form-control admin-shift-filter-select" style="min-width:230px;" onchange="handleAdminShiftFilterChange(this.value)"></select>
+              </div>
+            </div>
+
+            <div id="admin-hub-density-grid" class="hub-grid"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast thông báo -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <strong>🌿 BẾP XANH — Hệ thống Suất ăn Đặt trước (Pre-order) & Sản xuất Tinh gọn (Just-in-Time)</strong>
+        <div style="font-size:0.78rem; opacity:0.85; margin-top:0.2rem;">
+          Phục vụ Sinh viên & Cán bộ Giảng viên khu vực Đại học Bách Khoa, Kinh Tế Quốc Dân, Xây Dựng, ĐH Quốc Gia Hà Nội.
+        </div>
+      </div>
+      <div style="font-size:0.78rem; opacity:0.85;">
+        Khóa đơn trước 2–3h • Định mức BOM tự động • Giao gộp điểm tập kết cố định
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
